@@ -63,3 +63,73 @@ export async function ubahPasswordAdmin(previousState, formData) {
 
   return { error: null, success: "Password berhasil diubah." };
 }
+
+export async function tambahProduk(formData) {
+  const nama = formData.get("nama")?.toString().trim();
+  const harga = Number(formData.get("harga"));
+
+  if (!nama || !Number.isInteger(harga) || harga < 0) {
+    throw new Error("Nama dan harga produk tidak valid.");
+  }
+
+  const supabase = await createAuthServerClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    redirect("/admin/login");
+  }
+
+  const { error } = await supabase.from("produk").insert({
+    nama,
+    harga,
+    kategori: formData.get("kategori")?.toString().trim() || null,
+    foto_url: formData.get("foto_url")?.toString().trim() || null,
+    deskripsi: formData.get("deskripsi")?.toString().trim() || null,
+  });
+
+  if (error) {
+    throw new Error("Gagal menyimpan produk.");
+  }
+
+  redirect("/admin");
+}
+
+export async function ubahProduk(formData) {
+  const id = formData.get("id")?.toString();
+  const nama = formData.get("nama")?.toString().trim();
+  const harga = Number(formData.get("harga"));
+
+  if (!id || !nama || !Number.isInteger(harga) || harga < 0) {
+    throw new Error("Data produk tidak valid.");
+  }
+
+  const supabase = await createAuthServerClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    redirect("/admin/login");
+  }
+
+  const { error } = await supabase
+    .from("produk")
+    .update({
+      nama,
+      harga,
+      kategori: formData.get("kategori")?.toString().trim() || null,
+      foto_url: formData.get("foto_url")?.toString().trim() || null,
+      deskripsi: formData.get("deskripsi")?.toString().trim() || null,
+    })
+    .eq("id", id);
+
+  if (error) {
+    throw new Error("Gagal menyimpan perubahan produk.");
+  }
+
+  redirect("/admin");
+}
