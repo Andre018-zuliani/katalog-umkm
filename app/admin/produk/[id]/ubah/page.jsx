@@ -3,9 +3,12 @@ import NavAdmin from "@/components/NavAdmin";
 import FormProduk from "@/components/FormProduk";
 import { ubahProduk } from "@/app/admin/actions";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { wajibLogin } from "@/lib/supabase/auth-server";
 
 // US-09 (bonus di jalur offline): ubah produk.
 export default async function HalamanUbahProduk({ params }) {
+  await wajibLogin();
+
   const { id } = await params;
   const supabase = createServerSupabaseClient();
   const { data: produk, error } = await supabase

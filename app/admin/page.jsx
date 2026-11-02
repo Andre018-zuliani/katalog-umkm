@@ -2,10 +2,13 @@ import NavAdmin from "@/components/NavAdmin";
 import TabelProduk from "@/components/TabelProduk";
 import Tombol from "@/components/Tombol";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { wajibLogin } from "@/lib/supabase/auth-server";
 
 export const dynamic = "force-dynamic";
 
 export default async function HalamanAdmin() {
+  await wajibLogin();
+
   const supabase = createServerSupabaseClient();
   const { data: daftarProduk, error } = await supabase
     .from("produk")

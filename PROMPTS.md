@@ -68,6 +68,17 @@ Pengunjung tanpa sesi diarahkan ke `/admin/login`, dan proxy mempertahankan cook
 **Perbaikan:**
 `ubahPasswordAdmin` memanggil `getUser()` sebelum `updateUser`; build mengenali proxy Next.js 16.
 
+## Debugging: /admin masih 200 tanpa login
+
+**Prompt:**
+Periksa kenapa `/admin` dan `/admin/password` mengembalikan 200 tanpa login, lalu pastikan kode terbaru sudah ter-push dan Vercel memakai deployment terbaru.
+
+**Hasil:**
+Build produksi di lokal mengembalikan 307 ke `/admin/login`. Kode terbaru (termasuk `proxy.js` dan katalog dari database) sudah ada di GitHub `main`, jadi penyebabnya bukan logika proteksi, melainkan deployment Vercel yang masih memakai versi lama atau branch yang salah.
+
+**Perbaikan:**
+Menambahkan `wajibLogin()` di setiap halaman admin supaya proteksi tidak hanya bergantung pada `proxy.js` dan halaman tidak di-prerender statis. `proxy.js` juga menangani kegagalan pengecekan sesi dengan mengalihkan ke halaman login.
+
 ## Debugging dan fitur bonus
 
 Tambahkan bagian baru untuk setiap error yang kamu perbaiki atau fitur bonus yang kamu kerjakan.
